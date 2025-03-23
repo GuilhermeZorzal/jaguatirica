@@ -7,11 +7,13 @@ conversor de html para markdown
 
 customização de themas, cores, dashboard (talvez), etc
 
+keymaps customization (maybe with tui, maybe via config file)
 
 
+# DESING
 
-
-
+The tool should be responsive, adapting both for bigger and small screens
+In fact, even if the screen is bigger, usually the search tools mantain the same size of a mobile screen
 
 ## Home page
 ```
@@ -26,8 +28,6 @@ customização de themas, cores, dashboard (talvez), etc
 │                                                                                           │
 ╰────────────────────────────────────────────────────────────────────────────────────────────╯
 ```
-
-
 
 ## Results page
 ```
