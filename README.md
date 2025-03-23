@@ -8,7 +8,7 @@
 
 <img src="imagem.png" alt="Exemplo imagem">
 
-> A highly customizable terminal web browser wirtten in Go for hippisters 💪
+> A highly customizable terminal web browser written in Go for hipsters 💪
 
 # **Adjustments and Improvements**  
 
