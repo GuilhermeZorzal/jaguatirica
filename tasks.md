@@ -3,11 +3,12 @@
 Pagina inical com barra de pesquisa
 - Opção de pesquisa avançada: a api do google fornece varios parametros que um usuario mais avançado pode querer usar
 
-conversor de html para markdown
-
 customização de themas, cores, dashboard (talvez), etc
-
 keymaps customization (maybe with tui, maybe via config file)
+
+extensibility: allow people to create their own plugins to render specifics pages, or to add new search engines
+- Mainly, the idea that the user may be capable of creating is own config file for displaing the structure of stackoverflow, for example
+
 
 
 # DESING
