@@ -6,7 +6,7 @@
 ![Bitbucket open issues](https://img.shields.io/bitbucket/issues/GuilhermeZorzal/jaguatirica?style=for-the-badge)
 ![Bitbucket open pull requests](https://img.shields.io/bitbucket/pr-raw/GuilhermeZorzal/jaguatirica?style=for-the-badge)
 
-<img src="jaguatirica.jpeg" alt="Exemplo imagem">
+<img src="./assets/jaguatirica.jpeg" alt="Exemplo imagem">
 
 > A highly customizable terminal web browser written in Go for hipsters 💪
 
