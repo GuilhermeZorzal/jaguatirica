@@ -40,10 +40,6 @@ To contribute to Jaguatirica, follow these steps:
 
 Alternatively, check out GitHub's documentation on [how to create a pull request](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request).  
 
-## **Be a Contributor**  
-
-Do you want to be part of this project? Click [HERE](CONTRIBUTING.md) and read how to contribute.  
-
-## **📝 License**  
+## **📝 License** 
 
 This project is under license. See the [LICENSE](LICENSE) file for more details.  
