@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	// "fmt"
 	"log"
 
 	"github.com/gdamore/tcell/v2"
@@ -50,10 +50,10 @@ func drawBox(s tcell.Screen, x1, y1, x2, y2 int, style tcell.Style, text string)
 
 	// Only draw corners if necessary
 	if y1 != y2 && x1 != x2 {
-		s.SetContent(x1, y1, tcell.RuneULCorner, nil, style)
-		s.SetContent(x2, y1, tcell.RuneURCorner, nil, style)
-		s.SetContent(x1, y2, tcell.RuneLLCorner, nil, style)
-		s.SetContent(x2, y2, tcell.RuneLRCorner, nil, style)
+		s.SetContent(x1, y1, '╭', nil, style)
+		s.SetContent(x2, y1, '╮', nil, style)
+		s.SetContent(x1, y2, '╰', nil, style)
+		s.SetContent(x2, y2, '╯', nil, style)
 	}
 
 	drawText(s, x1+1, y1+1, x2-1, y2-1, style, text)
@@ -61,7 +61,7 @@ func drawBox(s tcell.Screen, x1, y1, x2, y2 int, style tcell.Style, text string)
 
 func main() {
 	defStyle := tcell.StyleDefault.Background(tcell.ColorReset).Foreground(tcell.ColorReset)
-	boxStyle := tcell.StyleDefault.Foreground(tcell.ColorWhite).Background(tcell.ColorPurple)
+	boxStyle := tcell.StyleDefault.Foreground(tcell.ColorWhite).Background(tcell.ColorNone)
 
 	// Initialize screen
 	s, err := tcell.NewScreen()
@@ -115,12 +115,18 @@ func main() {
 		case *tcell.EventResize:
 			s.Sync()
 		case *tcell.EventKey:
-			if ev.Key() == tcell.KeyEscape || ev.Key() == tcell.KeyCtrlC {
+			s.SetContent(1, 0, ev.Rune(), nil, defStyle)
+			if ev.Key() == tcell.KeyCtrlC || ev.Rune() == 'q' {
 				return
 			} else if ev.Key() == tcell.KeyCtrlL {
 				s.Sync()
 			} else if ev.Rune() == 'C' || ev.Rune() == 'c' {
 				s.Clear()
+			} else if ev.Rune() == 'i' || ev.Rune() == 'I' {
+				drawBox(s, 1, 1, 12, 3, boxStyle, "<insert>")
+				// func drawBox(s tcell.Screen, x1, y1, x2, y2 int, style tcell.Style, text string) {
+			} else if ev.Key() == tcell.KeyEscape {
+				drawBox(s, 1, 1, 12, 3, boxStyle, "<normal>")
 			}
 		case *tcell.EventMouse:
 			x, y := ev.Position()
@@ -133,8 +139,8 @@ func main() {
 
 			case tcell.ButtonNone:
 				if ox >= 0 {
-					label := fmt.Sprintf("%d,%d to %d,%d", ox, oy, x, y)
-					drawBox(s, ox, oy, x, y, boxStyle, label)
+					// label := fmt.Sprintf("%d,%d to %d,%d", ox, oy, x, y)
+					drawBox(s, ox, oy, x, y, boxStyle, "Abacate Louco")
 					ox, oy = -1, -1
 				}
 			}
