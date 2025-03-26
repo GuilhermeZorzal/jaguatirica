@@ -44,6 +44,8 @@ func main() {
 	// queue is LIFO, it has a limited length, and PostEvent() can
 	// return an error.
 	// s.PostEvent(tcell.NewEventKey(tcell.KeyRune, rune('a'), 0))
+	//
+	// mode := "normal"
 
 	// Event loop
 	ox, oy := -1, -1

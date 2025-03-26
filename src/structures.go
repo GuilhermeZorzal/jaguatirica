@@ -5,7 +5,7 @@ import (
 )
 
 type Drawable interface {
-	Draw()
+	Draw(tcell.Screen)
 }
 
 type Structure struct {
