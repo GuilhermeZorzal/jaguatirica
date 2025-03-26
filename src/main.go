@@ -63,6 +63,11 @@ func main() {
 			totalX, totalY := s.Size()
 			dashboard := NewDashboard(totalX, totalY)
 			dashboard.Draw(s)
+			// iStr := NewStructure(0, 0, 8, 8, 0, 0, true, tcell.ColorBrown)
+			// // iStr := NewStructure(structure.x+structure.paddingX, structure.y+structure.paddingY, structure.x+structure.width, structure.y+structure.paddingY, 0, 0, true, tcell.ColorBrown)
+			//
+			// i := NewInputField(*iStr)
+			// i.Draw(s)
 			s.Sync()
 		case *tcell.EventKey:
 			s.SetContent(1, 0, ev.Rune(), nil, defStyle)

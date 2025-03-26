@@ -68,7 +68,7 @@ func NewLogo() *Logo {
 func NewDashboard(totalX int, totalY int) *Dashboard {
 	logo := NewLogo()
 	searchHeight := 2
-	widthSearch := totalX / 2
+	widthSearch := (totalX / 2)
 
 	xSearch := (totalX - widthSearch) / 2
 	xLogo := (totalX - logo.width) / 2

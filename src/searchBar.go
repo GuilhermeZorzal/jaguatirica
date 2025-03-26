@@ -7,15 +7,10 @@ import (
 type SeachBar struct {
 	Structure
 	Border
+	InputField
 
-	placeholder string
-	text        string
-
-	hasFocus         bool
-	focusColor       tcell.Color
-	backgroundColor  tcell.Color
-	textColor        tcell.Color
-	placeholderColor tcell.Color
+	hasFocus        bool
+	backgroundColor tcell.Color
 }
 
 func (o *SeachBar) Draw(s tcell.Screen) {
@@ -25,69 +20,24 @@ func (o *SeachBar) Draw(s tcell.Screen) {
 	col := o.x + o.paddingX
 	row := o.y + o.paddingY
 
-	if len(o.text) == 0 {
-		style := tcell.StyleDefault.Background(o.backgroundColor).Foreground(o.placeholderColor)
-		if o.hasFocus {
-			style = tcell.StyleDefault.Background(o.focusColor).Foreground(o.placeholderColor)
-			for rowLoc := o.y + o.paddingX; rowLoc <= o.y+o.height-o.paddingY; rowLoc++ {
-				for colLoc := o.x + o.paddingX; colLoc <= o.x+o.width-o.paddingX; colLoc++ {
-					s.SetContent(colLoc, rowLoc, ' ', nil, style)
-				}
-			}
-		}
-
-		s.SetContent(col, row, '', nil, style)
-		col += 2
-
-		for r := range len(o.placeholder) {
-			s.SetContent(col, row, rune(o.placeholder[r]), nil, style)
-			col++
-			if col >= o.x+o.width-o.paddingX {
-				row++
-				col = o.x + o.paddingX
-			}
-			if row > o.y+o.height {
-				break
-			}
-		}
-	} else {
-		style := tcell.StyleDefault.Background(o.backgroundColor).Foreground(o.textColor)
-		if o.hasFocus {
-			style = tcell.StyleDefault.Background(o.focusColor).Foreground(o.textColor)
-			for rowLoc := o.y + o.paddingX; rowLoc <= o.y+o.height-o.paddingY; rowLoc++ {
-				for colLoc := o.x + o.paddingX; colLoc <= o.x+o.width-o.paddingX; colLoc++ {
-					s.SetContent(colLoc, rowLoc, ' ', nil, style)
-				}
-			}
-		}
-		s.SetContent(col, row, '', nil, style)
-		col += 2
-		for r := range len(o.text) {
-			s.SetContent(col, row, rune(o.text[r]), nil, style)
-			col++
-			if col >= o.x+o.width-o.paddingX {
-				row++
-				col = o.x + o.paddingX
-			}
-			if row > o.y+o.height {
-				break
-			}
-		}
-	}
+	style := tcell.StyleDefault.Background(o.backgroundColor).Foreground(o.Border.borderColor)
+	s.SetContent(col, row, '', nil, style)
+	o.InputField.Draw(s)
 }
 
 func NewSearchBar(structure Structure, border Border, placeholder string, text string, hasFocus bool, focusColor tcell.Color, backgroundColor tcell.Color, textColor tcell.Color, placeholderColor tcell.Color) *SeachBar {
+	// iStr := NewStructure(structure.x , structure.y, structure.width, structure.paddingY, 0, 0, true, tcell.ColorBrown)
+	// The +- 3 is due to the ">" placeholder at the beggining of the search bar
+	iStr := NewStructure(structure.x+structure.paddingX+3, structure.y+structure.paddingY, structure.width-2*border.paddingX-3, structure.height-2*structure.paddingY, 0, 0, true, tcell.ColorBrown)
+
+	i := NewInputField(*iStr, "", false, "Search", tcell.ColorDarkGray, tcell.ColorBrown, tcell.ColorNone, false, tcell.ColorGray)
+
 	o := &SeachBar{
-		Structure:        structure,
-		Border:           border,
-		placeholder:      placeholder,
-		text:             text,
-		hasFocus:         hasFocus,
-		focusColor:       focusColor,
-		backgroundColor:  backgroundColor,
-		textColor:        textColor,
-		placeholderColor: placeholderColor,
+		Structure:       structure,
+		Border:          border,
+		InputField:      *i,
+		hasFocus:        hasFocus,
+		backgroundColor: backgroundColor,
 	}
-	// The search bar will always have a height of 2
 	return o
 }
