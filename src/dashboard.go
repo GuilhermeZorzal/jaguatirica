@@ -3,6 +3,7 @@ package main
 import "github.com/gdamore/tcell/v2"
 
 type Dashboard struct {
+	Structure
 	objects []Drawable
 	inputs  []Inputs
 }
@@ -71,15 +72,15 @@ func (o *LogoBox) HandleInput(s tcell.Screen) {
 	s.SetContent(0, 8, '', nil, style)
 }
 
-func NewDashboard(totalX int, totalY int) *Dashboard {
+func NewDashboard(o Structure) *Dashboard {
 	logo := NewLogo()
 	searchHeight := 2
-	widthSearch := (totalX / 2)
+	widthSearch := (o.width / 2)
 
-	xSearch := (totalX - widthSearch) / 2
-	xLogo := (totalX - logo.width) / 2
+	xSearch := (o.width - widthSearch) / 2
+	xLogo := (o.width - logo.width) / 2
 
-	yLogo := (totalY - searchHeight - logo.height) / 2
+	yLogo := (o.height - searchHeight - logo.height) / 2
 	ySearch := yLogo + logo.height
 
 	logoStruct := NewStructure(xLogo, yLogo, logo.width, logo.height, 0, 1, true, tcell.ColorNone)

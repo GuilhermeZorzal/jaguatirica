@@ -9,5 +9,12 @@ type Drawable interface {
 }
 
 type Inputs interface {
+	Drawable
 	HandleInput(tcell.Screen, tcell.Key, rune)
+}
+
+type Screen struct {
+	Structure
+	objects []Drawable
+	inputs  []Inputs
 }

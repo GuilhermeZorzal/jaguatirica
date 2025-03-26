@@ -45,8 +45,11 @@ func main() {
 	// s.PostEvent(tcell.NewEventKey(tcell.KeyRune, rune('a'), 0))
 	//
 	// mode := "normal"
-	totalX, totalY := s.Size()
-	dashboard := NewDashboard(totalX, totalY)
+	browser := NewBrowser(s)
+	// x, y := s.Size()
+	// tabStruct := NewStructure(1, 0, x-1, y, 0, 0, true, tcell.ColorNone)
+	// tab := NewTab(*tabStruct, tcell.ColorWhite)
+	// dash := NewDashboard(*tabStruct)
 
 	// Event loop
 	ox, oy := -1, -1
@@ -62,7 +65,8 @@ func main() {
 
 		case *tcell.EventResize:
 			s.Clear()
-			dashboard.Draw(s)
+			browser.Draw(s)
+			// tab.Draw(s)
 			// iStr := NewStructure(0, 0, 8, 8, 0, 0, true, tcell.ColorBrown)
 			// // iStr := NewStructure(structure.x+structure.paddingX, structure.y+structure.paddingY, structure.x+structure.width, structure.y+structure.paddingY, 0, 0, true, tcell.ColorBrown)
 			//
@@ -70,24 +74,12 @@ func main() {
 			// i.Draw(s)
 			s.Sync()
 		case *tcell.EventKey:
-			dashboard.HandleInput(s, ev.Key(), ev.Rune())
-			// s.SetContent(1, 0, ev.Rune(), nil, defStyle)
-			if ev.Key() == tcell.KeyCtrlC || ev.Rune() == 'q' {
+			browser.HandleInput(s, ev.Key(), ev.Rune())
+			// tab.HandleInput(s, ev.Key(), ev.Rune())
+			if ev.Key() == tcell.KeyCtrlC {
 				return
-			} else if ev.Key() == tcell.KeyCtrlL {
-				s.Sync()
-			} else if ev.Rune() == 'C' || ev.Rune() == 'c' {
-				s.Clear()
-			} else if ev.Rune() == 'i' || ev.Rune() == 'I' {
-				i := NewBox()
-				i.text = "insert"
-				i.Draw(s)
-				// func drawBox(s tcell.Screen, x1, y1, x2, y2 int, style tcell.Style, text string) {
-			} else if ev.Key() == tcell.KeyEscape {
-				i := NewBox()
-				i.text = "normal"
-				i.Draw(s)
 			}
+			// s.SetContent(1, 0, ev.Rune(), nil, defStyle)
 		case *tcell.EventMouse:
 			x, y := ev.Position()
 
