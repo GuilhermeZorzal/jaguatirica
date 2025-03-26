@@ -30,7 +30,7 @@ func NewSearchBar(structure Structure, border Border, placeholder string, text s
 	// The +- 3 is due to the ">" placeholder at the beggining of the search bar
 	iStr := NewStructure(structure.x+structure.paddingX+3, structure.y+structure.paddingY, structure.width-2*border.paddingX-3, structure.height-2*structure.paddingY, 0, 0, true, tcell.ColorBrown)
 
-	i := NewInputField(*iStr, "", false, "Search", tcell.ColorDarkGray, tcell.ColorBrown, tcell.ColorNone, false, tcell.ColorGray)
+	i := NewInputField(*iStr, "", true, "Search", tcell.ColorDarkGray, tcell.ColorWhite, tcell.ColorReset, false, tcell.ColorIndigo)
 
 	o := &SeachBar{
 		Structure:       structure,
@@ -40,4 +40,9 @@ func NewSearchBar(structure Structure, border Border, placeholder string, text s
 		backgroundColor: backgroundColor,
 	}
 	return o
+}
+
+func (o *SeachBar) HandleInput(s tcell.Screen, e tcell.Key, k rune) {
+	o.Draw(s)
+	o.InputField.HandleInput(s, e, k)
 }

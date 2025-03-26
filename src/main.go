@@ -1,7 +1,6 @@
 package main
 
 import (
-	// "fmt"
 	"log"
 
 	"github.com/gdamore/tcell/v2"
@@ -46,6 +45,8 @@ func main() {
 	// s.PostEvent(tcell.NewEventKey(tcell.KeyRune, rune('a'), 0))
 	//
 	// mode := "normal"
+	totalX, totalY := s.Size()
+	dashboard := NewDashboard(totalX, totalY)
 
 	// Event loop
 	ox, oy := -1, -1
@@ -58,10 +59,9 @@ func main() {
 
 		// Process event
 		switch ev := ev.(type) {
+
 		case *tcell.EventResize:
 			s.Clear()
-			totalX, totalY := s.Size()
-			dashboard := NewDashboard(totalX, totalY)
 			dashboard.Draw(s)
 			// iStr := NewStructure(0, 0, 8, 8, 0, 0, true, tcell.ColorBrown)
 			// // iStr := NewStructure(structure.x+structure.paddingX, structure.y+structure.paddingY, structure.x+structure.width, structure.y+structure.paddingY, 0, 0, true, tcell.ColorBrown)
@@ -70,7 +70,8 @@ func main() {
 			// i.Draw(s)
 			s.Sync()
 		case *tcell.EventKey:
-			s.SetContent(1, 0, ev.Rune(), nil, defStyle)
+			dashboard.HandleInput(s, ev.Key(), ev.Rune())
+			// s.SetContent(1, 0, ev.Rune(), nil, defStyle)
 			if ev.Key() == tcell.KeyCtrlC || ev.Rune() == 'q' {
 				return
 			} else if ev.Key() == tcell.KeyCtrlL {

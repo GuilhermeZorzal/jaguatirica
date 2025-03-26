@@ -4,6 +4,7 @@ import "github.com/gdamore/tcell/v2"
 
 type Dashboard struct {
 	objects []Drawable
+	inputs  []Inputs
 }
 
 type LogoBox struct {
@@ -65,6 +66,11 @@ func NewLogo() *Logo {
 	return l
 }
 
+func (o *LogoBox) HandleInput(s tcell.Screen) {
+	style := tcell.StyleDefault.Background(o.backgroundColor).Foreground(o.backgroundColor)
+	s.SetContent(0, 8, '', nil, style)
+}
+
 func NewDashboard(totalX int, totalY int) *Dashboard {
 	logo := NewLogo()
 	searchHeight := 2
@@ -105,12 +111,19 @@ func NewDashboard(totalX int, totalY int) *Dashboard {
 
 	dashboard := &Dashboard{
 		objects: []Drawable{searchBar, LogoBox},
+		inputs:  []Inputs{searchBar},
 	}
 	return dashboard
 }
 
 func (o *Dashboard) Draw(s tcell.Screen) {
-	for i := range o.objects {
-		o.objects[i].Draw(s)
+	for _, i := range o.objects {
+		i.Draw(s)
+	}
+}
+
+func (o *Dashboard) HandleInput(s tcell.Screen, e tcell.Key, k rune) {
+	for _, i := range o.inputs {
+		i.HandleInput(s, e, k)
 	}
 }

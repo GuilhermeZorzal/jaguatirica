@@ -4,10 +4,6 @@ import (
 	"github.com/gdamore/tcell/v2"
 )
 
-type Drawable interface {
-	Draw(tcell.Screen)
-}
-
 type Structure struct {
 	x, y, width, height int
 	paddingX, paddingY  int

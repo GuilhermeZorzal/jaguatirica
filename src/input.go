@@ -1,6 +1,8 @@
 package main
 
-import "github.com/gdamore/tcell/v2"
+import (
+	"github.com/gdamore/tcell/v2"
+)
 
 type InputField struct {
 	Structure
@@ -14,14 +16,6 @@ type InputField struct {
 	backgroundColor tcell.Color
 	isWritting      bool
 	colorFocused    tcell.Color
-}
-
-func (o *InputField) AppendText(rune rune) {
-	o.text = o.text + string(rune)
-}
-
-func (o *InputField) DeleteText(rune rune) {
-	o.text = o.text[0 : len(o.text)-1]
 }
 
 func NewInputField(structure Structure,
@@ -53,16 +47,21 @@ func NewInputField(structure Structure,
 }
 
 func (o *InputField) Draw(s tcell.Screen) {
-	style := tcell.StyleDefault.Background(o.colorFocused).Foreground(o.placeholderColor)
-	s.SetContent(0, 0, rune(o.x), nil, style)
 	col := o.x
 	row := o.y
 
 	if o.hasFocus {
 		style := tcell.StyleDefault.Background(o.colorFocused).Foreground(o.placeholderColor)
-		for i := o.x; i < 10; i++ {
-			for j := o.y; j < 10; j++ {
-				s.SetContent(i, j, ' ', nil, style)
+		for rowLoc := o.y + o.paddingX; rowLoc <= o.y+o.height-o.paddingY; rowLoc++ {
+			for colLoc := o.x + o.paddingX; colLoc <= o.x+o.width-o.paddingX; colLoc++ {
+				s.SetContent(colLoc, rowLoc, ' ', nil, style)
+			}
+		}
+	} else {
+		style := tcell.StyleDefault.Background(o.backgroundColor).Foreground(tcell.ColorReset)
+		for rowLoc := o.y + o.paddingX; rowLoc <= o.y+o.height-o.paddingY; rowLoc++ {
+			for colLoc := o.x + o.paddingX; colLoc <= o.x+o.width-o.paddingX; colLoc++ {
+				s.SetContent(colLoc, rowLoc, ' ', nil, style)
 			}
 		}
 	}
@@ -111,4 +110,48 @@ func (o *InputField) Draw(s tcell.Screen) {
 			}
 		}
 	}
+}
+
+func (o *InputField) AppendText(rune rune) {
+	o.text = o.text + string(rune)
+}
+
+func (o *InputField) DeleteText() {
+	o.text = ""
+}
+
+func (o *InputField) DeleteSingleChar(s tcell.Screen) {
+	if len(o.text) == 0 {
+		o.Draw(s)
+		return
+	} else {
+		o.text = o.text[0 : len(o.text)-1]
+	}
+}
+
+func (o *InputField) HandleInput(s tcell.Screen, e tcell.Key, r rune) {
+	if !o.isWritting {
+		if e == tcell.KeyEscape {
+			o.isWritting = false
+			o.hasFocus = true
+		} else if r == 'i' {
+			o.isWritting = true
+			o.hasFocus = false
+		} else if r == 'd' {
+			o.DeleteText()
+		}
+	} else { // Handle is Writting
+		switch e {
+		case tcell.KeyEscape:
+			o.isWritting = false
+			o.hasFocus = true
+		case tcell.KeyBackspace:
+			o.DeleteSingleChar(s)
+		case tcell.KeyBackspace2:
+			o.DeleteSingleChar(s)
+		default:
+			o.AppendText(r)
+		}
+	}
+	o.Draw(s)
 }
