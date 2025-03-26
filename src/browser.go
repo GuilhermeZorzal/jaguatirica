@@ -19,7 +19,7 @@ func NewBrowser(s tcell.Screen) *Browser {
 	x, y := s.Size()
 	browserStruct := NewStructure(0, 0, x, y, 0, 0, true, tcell.ColorNone)
 	tabStruct := NewStructure(1, 0, x, y, 0, 0, true, tcell.ColorNone)
-	lineStruct := NewStructure(0, y-1, x, 1, 1, 0, true, tcell.ColorGray)
+	lineStruct := NewStructure(0, y-1, x, 1, 1, 0, true, tcell.ColorBlack)
 	tab := NewTab(*tabStruct, tcell.ColorWhite)
 
 	b := &Browser{
@@ -38,7 +38,8 @@ func (o *Browser) Draw(s tcell.Screen) {
 }
 
 func (o *Browser) HandleInput(s tcell.Screen, k tcell.Key, r rune) {
-	if o.Mode == "NORMAL" {
+	switch o.Mode {
+	case "NORMAL":
 		switch r {
 		case 'n':
 			x, y := s.Size()
@@ -56,8 +57,12 @@ func (o *Browser) HandleInput(s tcell.Screen, k tcell.Key, r rune) {
 			os.Exit(0)
 		case 'i':
 			o.Mode = "INSERT"
+		case 'l':
+			o.current = o.CicleTabs(0)
+		case 'h':
+			o.current = o.CicleTabs(1)
 		}
-	} else if o.Mode == "INSERT" {
+	case "INSERT":
 		if k == tcell.KeyEscape {
 			o.Mode = "NORMAL"
 		}
@@ -66,6 +71,23 @@ func (o *Browser) HandleInput(s tcell.Screen, k tcell.Key, r rune) {
 	o.Line.Draw(s)
 }
 
-func (o *Browser) DrawTabs(s tcell.Screen) {
-	o.Tab[o.current].Draw(s)
+func (o *Browser) CycleTabs(dir int) int {
+	tot := len(o.Tab)
+	if tot == 0 {
+		return -1 // Handle case where there are no tabs
+	}
+	if dir > 0 {
+		o.current = (o.current + 1) % tot
+	} else {
+		o.current = (o.current - 1 + tot) % tot
+	}
+	return o.current
+}
+
+func (o *Browser) CicleTabs(dir int) int {
+	tot := len(o.Tab)
+	if dir == 0 {
+		return (o.current + 1) % tot
+	}
+	return (o.current - 1) % tot
 }
