@@ -1,15 +1,15 @@
-# Requisitos 
+# Requisitos
 
 Pagina inical com barra de pesquisa
+
 - Opção de pesquisa avançada: a api do google fornece varios parametros que um usuario mais avançado pode querer usar
 
 customização de themas, cores, dashboard (talvez), etc
 keymaps customization (maybe with tui, maybe via config file)
 
 extensibility: allow people to create their own plugins to render specifics pages, or to add new search engines
+
 - Mainly, the idea that the user may be capable of creating is own config file for displaing the structure of stackoverflow, for example
-
-
 
 # DESING
 
@@ -17,28 +17,30 @@ The tool should be responsive, adapting both for bigger and small screens
 In fact, even if the screen is bigger, usually the search tools mantain the same size of a mobile screen
 
 ## Home page
+
 ```
-           ██╗ █████╗  ██████╗ ██╗   ██╗ █████╗ ████████╗██╗██████╗ ██╗ ██████╗ █████╗  
-           ██║██╔══██╗██╔════╝ ██║   ██║██╔══██╗╚══██╔══╝██║██╔══██╗██║██╔════╝██╔══██╗ 
-           ██║███████║██║  ███╗██║   ██║███████║   ██║   ██║██████╔╝██║██║     ███████║ 
-      ██   ██║██╔══██║██║   ██║██║   ██║██╔══██║   ██║   ██║██╔══██╗██║██║     ██╔══██║ 
-      ╚█████╔╝██║  ██║╚██████╔╝╚██████╔╝██║  ██║   ██║   ██║██║  ██║██║╚██████╗██║  ██║ 
-       ╚════╝ ╚═╝  ╚═╝ ╚═════╝  ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚═╝╚═╝  ╚═╝╚═╝ ╚═════╝╚═╝  ╚═╝ 
-      
+           ██╗ █████╗  ██████╗ ██╗   ██╗ █████╗ ████████╗██╗██████╗ ██╗ ██████╗ █████╗
+           ██║██╔══██╗██╔════╝ ██║   ██║██╔══██╗╚══██╔══╝██║██╔══██╗██║██╔════╝██╔══██╗
+           ██║███████║██║  ███╗██║   ██║███████║   ██║   ██║██████╔╝██║██║     ███████║
+      ██   ██║██╔══██║██║   ██║██║   ██║██╔══██║   ██║   ██║██╔══██╗██║██║     ██╔══██║
+      ╚█████╔╝██║  ██║╚██████╔╝╚██████╔╝██║  ██║   ██║   ██║██║  ██║██║╚██████╗██║  ██║
+       ╚════╝ ╚═╝  ╚═╝ ╚═════╝  ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚═╝╚═╝  ╚═╝╚═╝ ╚═════╝╚═╝  ╚═╝
+
 ╭──────────────────────────────────────── Search ────────────────────────────────────────────╮
 │                                                                                           │
 ╰────────────────────────────────────────────────────────────────────────────────────────────╯
 ```
 
 ## Results page
+
 ```
 ╭──────────────────────────────────────── Search ────────────────────────────────────────────╮
 │ Batata                                                                      │ Jaguatirica │
 ╰────────────────────────────────────────────────────────────────────────────────────────────╯
 
 # Batata. A origem da batata ────────────────────────────────────────────────── Brasil Escola
-│ 
-│ A batata é um tubérculo pertencente à família das Solanaceae. Surgiu nos Andes e nas Ilhas 
+│
+│ A batata é um tubérculo pertencente à família das Solanaceae. Surgiu nos Andes e nas Ilhas
 │ Chilenas, foi levada para a Europa no século XVI e tornou-se base da ...
 ╰─────────────────────────────────────────────────── https://brasilescola.uol.com.br › saud...
 
@@ -51,26 +53,26 @@ In fact, even if the screen is bigger, usually the search tools mantain the same
 
 
 # Batata - Mundo Educação ───────────────────────────────────────────────────── Mundo Educação
-│ 
-│ A batata é pobre em gordura e rica em carboidratos, ou seja, é uma ótima fonte de energia. 
+│
+│ A batata é pobre em gordura e rica em carboidratos, ou seja, é uma ótima fonte de energia.
 │ O tubérculo também possui quantidades consideráveis de vitamina
 ╰─────────────────────────────────────────────────── https://mundoeducacao.uol.com.br › sau...
 ```
-
 
 ## Advanced search
 
 Talvez abrir como um painel lateral?
 Talvez abrir como um folding em baixo da barra?
 All the possible filters from google api are [here](https://developers.google.com/custom-search/v1/reference/rest/v1/cse/list?apix=true&hl=pt-br)
+
 ```
-           ██╗ █████╗  ██████╗ ██╗   ██╗ █████╗ ████████╗██╗██████╗ ██╗ ██████╗ █████╗  
-           ██║██╔══██╗██╔════╝ ██║   ██║██╔══██╗╚══██╔══╝██║██╔══██╗██║██╔════╝██╔══██╗ 
-           ██║███████║██║  ███╗██║   ██║███████║   ██║   ██║██████╔╝██║██║     ███████║ 
-      ██   ██║██╔══██║██║   ██║██║   ██║██╔══██║   ██║   ██║██╔══██╗██║██║     ██╔══██║ 
-      ╚█████╔╝██║  ██║╚██████╔╝╚██████╔╝██║  ██║   ██║   ██║██║  ██║██║╚██████╗██║  ██║ 
-       ╚════╝ ╚═╝  ╚═╝ ╚═════╝  ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚═╝╚═╝  ╚═╝╚═╝ ╚═════╝╚═╝  ╚═╝ 
-      
+           ██╗ █████╗  ██████╗ ██╗   ██╗ █████╗ ████████╗██╗██████╗ ██╗ ██████╗ █████╗
+           ██║██╔══██╗██╔════╝ ██║   ██║██╔══██╗╚══██╔══╝██║██╔══██╗██║██╔════╝██╔══██╗
+           ██║███████║██║  ███╗██║   ██║███████║   ██║   ██║██████╔╝██║██║     ███████║
+      ██   ██║██╔══██║██║   ██║██║   ██║██╔══██║   ██║   ██║██╔══██╗██║██║     ██╔══██║
+      ╚█████╔╝██║  ██║╚██████╔╝╚██████╔╝██║  ██║   ██║   ██║██║  ██║██║╚██████╗██║  ██║
+       ╚════╝ ╚═╝  ╚═╝ ╚═════╝  ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚═╝╚═╝  ╚═╝╚═╝ ╚═════╝╚═╝  ╚═╝
+
 ╭──────────────────────────────────────── Search ────────────────────────────────────────────╮
 │                                                                                           │
 ╰────────────────────────────────────────────────────────────────────────────────────────────╯
@@ -96,7 +98,9 @@ All the possible filters from google api are [here](https://developers.google.co
 ╰────────────────────────────────────────────────────────────────────────────────────────────╯
 
 ```
+
 Some options may unfold
+
 ```
 ╭──────────────────────────────── ADVANCED SEARCH OPTIONS ───────────────────────────────────╮
 │─────────────────────────────────────── Language ───────────────────────────────────────────│
