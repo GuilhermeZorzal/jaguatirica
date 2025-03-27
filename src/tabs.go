@@ -27,3 +27,13 @@ func NewTab(structure Structure, fontColor tcell.Color) *Tab {
 	}
 	return tab
 }
+
+func (o *Tab) DrawTab(s tcell.Screen, x int, y int, w int, style tcell.Style) {
+	for i := range len(o.title) {
+		// width
+		if i > w {
+			break
+		}
+		s.SetContent(x+i, y, rune(o.title[i]), nil, style)
+	}
+}

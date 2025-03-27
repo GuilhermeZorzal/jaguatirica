@@ -35,6 +35,7 @@ func NewBrowser(s tcell.Screen) *Browser {
 func (o *Browser) Draw(s tcell.Screen) {
 	o.Tab[o.current].Draw(s)
 	o.Line.Draw(s)
+	o.DrawTabs(s)
 }
 
 func (o *Browser) HandleInput(s tcell.Screen, k tcell.Key, r rune) {
@@ -58,9 +59,9 @@ func (o *Browser) HandleInput(s tcell.Screen, k tcell.Key, r rune) {
 		case 'i':
 			o.Mode = "INSERT"
 		case 'l':
-			o.current = o.CicleTabs(0)
+			o.current = o.CycleTabs(1)
 		case 'h':
-			o.current = o.CicleTabs(1)
+			o.current = o.CycleTabs(0)
 		}
 	case "INSERT":
 		if k == tcell.KeyEscape {
@@ -68,7 +69,7 @@ func (o *Browser) HandleInput(s tcell.Screen, k tcell.Key, r rune) {
 		}
 	}
 	o.Tab[o.current].HandleInput(s, k, r)
-	o.Line.Draw(s)
+	o.Draw(s)
 }
 
 func (o *Browser) CycleTabs(dir int) int {
@@ -84,10 +85,32 @@ func (o *Browser) CycleTabs(dir int) int {
 	return o.current
 }
 
-func (o *Browser) CicleTabs(dir int) int {
-	tot := len(o.Tab)
-	if dir == 0 {
-		return (o.current + 1) % tot
+func (o *Browser) DrawTabs(s tcell.Screen) {
+	w := 10
+	ini := 1
+	x, _ := s.Size()
+
+	style := tcell.StyleDefault.Background(o.backgroundColor).Foreground(tcell.ColorWhite).Bold(false)
+	styleBold := tcell.StyleDefault.Background(o.backgroundColor).Foreground(tcell.ColorWhite).Bold(true)
+
+	for n, i := range o.Tab {
+		if n == o.current {
+			i.DrawTab(s, ini, 0, w, styleBold)
+			ini += w + 3
+			s.SetContent(ini, 0, '|', nil, style)
+			ini += 1
+			s.SetContent(ini, 0, ' ', nil, style)
+			ini += 1
+		} else {
+			i.DrawTab(s, ini, 0, w, style)
+			ini += w + 3
+			s.SetContent(ini, 0, '|', nil, style)
+			ini += 1
+			s.SetContent(ini, 0, ' ', nil, style)
+			ini += 1
+		}
+		if ini > x {
+			break
+		}
 	}
-	return (o.current - 1) % tot
 }
