@@ -37,3 +37,7 @@ func (o *Tab) DrawTab(s tcell.Screen, x int, y int, w int, style tcell.Style) {
 		s.SetContent(x+i, y, rune(o.title[i]), nil, style)
 	}
 }
+
+// func SetTitle(o *Tab, s string) {
+// 	o.title = s
+// }

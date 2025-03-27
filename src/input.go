@@ -16,6 +16,8 @@ type InputField struct {
 	backgroundColor tcell.Color
 	isWritting      bool
 	colorFocused    tcell.Color
+
+	Submit func()
 }
 
 func NewInputField(structure Structure,
@@ -112,6 +114,10 @@ func (o *InputField) Draw(s tcell.Screen) {
 	}
 }
 
+func (o *InputField) SetSubmit(f func()) {
+	o.Submit = f
+}
+
 func (o *InputField) AppendText(rune rune) {
 	o.text = o.text + string(rune)
 }
@@ -149,6 +155,8 @@ func (o *InputField) HandleInput(s tcell.Screen, e tcell.Key, r rune) {
 			o.DeleteSingleChar(s)
 		case tcell.KeyBackspace2:
 			o.DeleteSingleChar(s)
+		case tcell.KeyEnter:
+			o.Submit()
 		default:
 			o.AppendText(r)
 		}

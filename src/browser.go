@@ -93,6 +93,10 @@ func (o *Browser) DrawTabs(s tcell.Screen) {
 	style := tcell.StyleDefault.Background(o.backgroundColor).Foreground(tcell.ColorWhite).Bold(false)
 	styleBold := tcell.StyleDefault.Background(o.backgroundColor).Foreground(tcell.ColorWhite).Bold(true)
 
+	for i := range x {
+		s.SetContent(i, 0, ' ', nil, style)
+	}
+
 	for n, i := range o.Tab {
 		if n == o.current {
 			i.DrawTab(s, ini, 0, w, styleBold)
