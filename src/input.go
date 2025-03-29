@@ -1,49 +1,50 @@
 package main
 
 import (
+	"os"
+
 	"github.com/gdamore/tcell/v2"
 )
 
 type InputField struct {
-	Structure
-	text string
+	*Structure
 
-	placeholder      string
-	placeholderColor tcell.Color
+	text        []rune
+	placeholder []rune
 
-	hasFocus        bool
-	color           tcell.Color
-	backgroundColor tcell.Color
-	isWritting      bool
-	colorFocused    tcell.Color
+	style                   tcell.Style
+	placeholderStyle        tcell.Style
+	styleFocused            tcell.Style
+	placeholderStyleFocused tcell.Style
 
-	Submit func()
+	hasFocus   bool
+	isWritting bool
+
+	Submit func() int
 }
 
-func NewInputField(structure Structure,
-	text string,
-	hasFocus bool,
-	placeholder string,
-	placeholderColor tcell.Color,
-	color tcell.Color,
-	backgroundColor tcell.Color,
-	isWritting bool,
-	colorFocused tcell.Color,
-) *InputField {
+func NewInputField() *InputField {
+	str := NewStructure()
+
+	Submit := func() int {
+		return 0
+	}
+
 	o := &InputField{
-		Structure: structure,
-		text:      text,
+		Structure: str,
+		text:      []rune("aaaaaaaaaaaaaaaaaaaaaaaaaaaaa"),
 
-		hasFocus: hasFocus,
+		placeholder: []rune("Input field"),
 
-		placeholder:      placeholder,
-		placeholderColor: placeholderColor,
+		style:                   tcell.StyleDefault.Background(tcell.ColorNone),
+		styleFocused:            tcell.StyleDefault.Background(tcell.ColorIndigo),
+		placeholderStyle:        tcell.StyleDefault.Background(tcell.ColorNone).Foreground(tcell.ColorGray),
+		placeholderStyleFocused: tcell.StyleDefault.Background(tcell.ColorGreen).Foreground(tcell.ColorGray),
 
-		color:           color,
-		backgroundColor: backgroundColor,
+		hasFocus:   true,
+		isWritting: false,
 
-		isWritting:   isWritting,
-		colorFocused: colorFocused,
+		Submit: Submit,
 	}
 	return o
 }
@@ -51,36 +52,31 @@ func NewInputField(structure Structure,
 func (o *InputField) Draw(s tcell.Screen) {
 	col := o.x
 	row := o.y
-
-	if o.hasFocus {
-		style := tcell.StyleDefault.Background(o.colorFocused).Foreground(o.placeholderColor)
-		for rowLoc := o.y + o.paddingX; rowLoc <= o.y+o.height-o.paddingY; rowLoc++ {
-			for colLoc := o.x + o.paddingX; colLoc <= o.x+o.width-o.paddingX; colLoc++ {
-				s.SetContent(colLoc, rowLoc, ' ', nil, style)
-			}
-		}
-	} else {
-		style := tcell.StyleDefault.Background(o.backgroundColor).Foreground(tcell.ColorReset)
-		for rowLoc := o.y + o.paddingX; rowLoc <= o.y+o.height-o.paddingY; rowLoc++ {
-			for colLoc := o.x + o.paddingX; colLoc <= o.x+o.width-o.paddingX; colLoc++ {
-				s.SetContent(colLoc, rowLoc, ' ', nil, style)
-			}
-		}
-	}
+	// if o.hasFocus {
+	// 	for rowLoc := o.y + o.paddingX; rowLoc <= o.y+o.height-o.paddingY; rowLoc++ {
+	// 		for colLoc := o.x + o.paddingX; colLoc <= o.x+o.width-o.paddingX; colLoc++ {
+	// 			s.SetContent(colLoc, rowLoc, ' ', nil, o.styleFocused)
+	// 		}
+	// 	}
+	// } else {
+	// 	for rowLoc := o.y + o.paddingX; rowLoc <= o.y+o.height-o.paddingY; rowLoc++ {
+	// 		for colLoc := o.x + o.paddingX; colLoc <= o.x+o.width-o.paddingX; colLoc++ {
+	// 			s.SetContent(colLoc, rowLoc, ' ', nil, o.style)
+	// 		}
+	// 	}
+	// }
 
 	if len(o.text) == 0 {
-		style := tcell.StyleDefault.Background(o.backgroundColor).Foreground(o.placeholderColor)
 		if o.hasFocus {
-			style = tcell.StyleDefault.Background(o.colorFocused).Foreground(o.placeholderColor)
-			for rowLoc := o.y + o.paddingX; rowLoc <= o.y+o.height-o.paddingY; rowLoc++ {
+			for rowLoc := o.y + o.paddingY; rowLoc <= o.y+o.height-o.paddingY; rowLoc++ {
 				for colLoc := o.x + o.paddingX; colLoc <= o.x+o.width-o.paddingX; colLoc++ {
-					s.SetContent(colLoc, rowLoc, ' ', nil, style)
+					s.SetContent(colLoc, rowLoc, ' ', nil, o.placeholderStyleFocused)
 				}
 			}
 		}
 
 		for r := range len(o.placeholder) {
-			s.SetContent(col, row, rune(o.placeholder[r]), nil, style)
+			s.SetContent(col, row, rune(o.placeholder[r]), nil, o.placeholderStyle)
 			col++
 			if col >= o.x+o.width-o.paddingX {
 				row++
@@ -91,39 +87,64 @@ func (o *InputField) Draw(s tcell.Screen) {
 			}
 		}
 	} else {
-		style := tcell.StyleDefault.Background(o.backgroundColor).Foreground(o.color)
 		if o.hasFocus {
-			style = tcell.StyleDefault.Background(o.colorFocused).Foreground(o.color)
 			for rowLoc := o.y + o.paddingY; rowLoc <= o.y+o.height-o.paddingY; rowLoc++ {
 				for colLoc := o.x + o.paddingX; colLoc <= o.x+o.width-o.paddingX; colLoc++ {
-					s.SetContent(colLoc, rowLoc, ' ', nil, style)
+					s.SetContent(colLoc, rowLoc, ' ', nil, o.style)
 				}
 			}
 		}
-		for r := range len(o.text) {
-			s.SetContent(col, row, rune(o.text[r]), nil, style)
-			col++
-			if col >= o.x+o.width-o.paddingX {
-				row++
-				col = o.x + o.paddingX
+		// Analysing each part of the expression:
+		//   (o.width - (2 * o.paddingX)) = gets the total usable width
+		//   (o.width - (2 * o.paddingX)) + 1 = line 0 also is used for writting, so +1
+		//   (o.height + 1 - (2 * o.paddingY)) -1 = same logic applys here
+		//   (o.width ... )) - 1 = the -1 at the end is for the cursor itself
+		totalUsableSpace := ((o.width + 1 - (2 * o.paddingX)) * (o.height + 1 - (2 * o.paddingY))) - 1
+		if len(o.text) > totalUsableSpace {
+			headText := len(o.text) - totalUsableSpace
+			partialText := o.text[headText:len(o.text)]
+			for r := range len(partialText) {
+				s.SetContent(col, row, rune(partialText[r]), nil, o.styleFocused)
+				col++
+				if col >= o.x+o.width-o.paddingX+1 {
+					row++
+					col = o.x + o.paddingX
+				}
+				if row > o.y+o.height-o.paddingY {
+					break
+				}
 			}
-			if row > o.y+o.height {
-				break
+		} else {
+			for r := range len(o.text) {
+				s.SetContent(col, row, rune(o.text[r]), nil, o.styleFocused)
+				col++
+				if col >= o.x+o.width-o.paddingX+1 {
+					row++
+					col = o.x + o.paddingX
+				}
+				if row > o.y+o.height-o.paddingY {
+					break
+				}
 			}
+		}
+
+		// Add the cursor at the end
+		if o.isWritting {
+			s.SetContent(col, row, RuneCursor, nil, o.styleFocused)
 		}
 	}
 }
 
-func (o *InputField) SetSubmit(f func()) {
+func (o *InputField) SetSubmit(f func() int) {
 	o.Submit = f
 }
 
 func (o *InputField) AppendText(rune rune) {
-	o.text = o.text + string(rune)
+	o.text = append(o.text, rune)
 }
 
 func (o *InputField) DeleteText() {
-	o.text = ""
+	o.text = []rune("")
 }
 
 func (o *InputField) DeleteSingleChar(s tcell.Screen) {
@@ -135,14 +156,19 @@ func (o *InputField) DeleteSingleChar(s tcell.Screen) {
 	}
 }
 
+// FIXME: is the best way handling it in here?
 func (o *InputField) HandleInput(s tcell.Screen, e tcell.Key, r rune) {
+	if !o.hasFocus && o.isWritting {
+		os.Exit(8)
+	}
+	if !o.hasFocus {
+		return
+	}
 	if !o.isWritting {
 		if e == tcell.KeyEscape {
 			o.isWritting = false
-			o.hasFocus = true
 		} else if r == 'i' {
 			o.isWritting = true
-			o.hasFocus = false
 		} else if r == 'd' {
 			o.DeleteText()
 		}
@@ -150,16 +176,61 @@ func (o *InputField) HandleInput(s tcell.Screen, e tcell.Key, r rune) {
 		switch e {
 		case tcell.KeyEscape:
 			o.isWritting = false
-			o.hasFocus = true
 		case tcell.KeyBackspace:
 			o.DeleteSingleChar(s)
 		case tcell.KeyBackspace2:
 			o.DeleteSingleChar(s)
 		case tcell.KeyEnter:
-			o.Submit()
+			if o.Submit == nil {
+				warn(s, "Nenhuma funcao de submit definida")
+			} else {
+				o.Submit()
+			}
 		default:
 			o.AppendText(r)
 		}
 	}
 	o.Draw(s)
+}
+
+// ███████╗███████╗████████╗████████╗███████╗██████╗ ███████╗
+// ██╔════╝██╔════╝╚══██╔══╝╚══██╔══╝██╔════╝██╔══██╗██╔════╝
+// ███████╗█████╗     ██║      ██║   █████╗  ██████╔╝███████╗
+// ╚════██║██╔══╝     ██║      ██║   ██╔══╝  ██╔══██╗╚════██║
+// ███████║███████╗   ██║      ██║   ███████╗██║  ██║███████║
+// ╚══════╝╚══════╝   ╚═╝      ╚═╝   ╚══════╝╚═╝  ╚═╝╚══════╝
+func (i *InputField) SetStructure(structure *Structure) {
+	i.Structure = structure
+}
+
+func (i *InputField) SetText(text []rune) {
+	i.text = text
+}
+
+func (i *InputField) SetPlaceholder(placeholder []rune) {
+	i.placeholder = placeholder
+}
+
+func (i *InputField) SetStyle(style tcell.Style) {
+	i.style = style
+}
+
+func (i *InputField) SetPlaceholderStyle(style tcell.Style) {
+	i.placeholderStyle = style
+}
+
+func (i *InputField) SetStyleFocused(style tcell.Style) {
+	i.styleFocused = style
+}
+
+func (i *InputField) SetPlaceholderStyleFocused(style tcell.Style) {
+	i.placeholderStyleFocused = style
+}
+
+func (i *InputField) SetHasFocus(hasFocus bool) {
+	i.hasFocus = hasFocus
+}
+
+func (i *InputField) SetIsWritting(isWritting bool) {
+	i.isWritting = isWritting
 }
