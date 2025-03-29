@@ -32,14 +32,14 @@ func NewInputField() *InputField {
 
 	o := &InputField{
 		Structure: str,
-		text:      []rune("aaaaaaaaaaaaaaaaaaaaaaaaaaaaa"),
+		text:      []rune(""),
 
 		placeholder: []rune("Input field"),
 
 		style:                   tcell.StyleDefault.Background(tcell.ColorNone),
-		styleFocused:            tcell.StyleDefault.Background(tcell.ColorIndigo),
-		placeholderStyle:        tcell.StyleDefault.Background(tcell.ColorNone).Foreground(tcell.ColorGray),
-		placeholderStyleFocused: tcell.StyleDefault.Background(tcell.ColorGreen).Foreground(tcell.ColorGray),
+		styleFocused:            tcell.StyleDefault.Background(tcell.ColorNone),
+		placeholderStyle:        tcell.StyleDefault.Background(tcell.ColorNone).Foreground(tcell.ColorWhite),
+		placeholderStyleFocused: tcell.StyleDefault.Background(tcell.ColorNone).Foreground(tcell.ColorGray),
 
 		hasFocus:   true,
 		isWritting: false,
@@ -50,22 +50,6 @@ func NewInputField() *InputField {
 }
 
 func (o *InputField) Draw(s tcell.Screen) {
-	col := o.x
-	row := o.y
-	// if o.hasFocus {
-	// 	for rowLoc := o.y + o.paddingX; rowLoc <= o.y+o.height-o.paddingY; rowLoc++ {
-	// 		for colLoc := o.x + o.paddingX; colLoc <= o.x+o.width-o.paddingX; colLoc++ {
-	// 			s.SetContent(colLoc, rowLoc, ' ', nil, o.styleFocused)
-	// 		}
-	// 	}
-	// } else {
-	// 	for rowLoc := o.y + o.paddingX; rowLoc <= o.y+o.height-o.paddingY; rowLoc++ {
-	// 		for colLoc := o.x + o.paddingX; colLoc <= o.x+o.width-o.paddingX; colLoc++ {
-	// 			s.SetContent(colLoc, rowLoc, ' ', nil, o.style)
-	// 		}
-	// 	}
-	// }
-
 	if len(o.text) == 0 {
 		if o.hasFocus {
 			for rowLoc := o.y + o.paddingY; rowLoc <= o.y+o.height-o.paddingY; rowLoc++ {
@@ -75,22 +59,26 @@ func (o *InputField) Draw(s tcell.Screen) {
 			}
 		}
 
+		x := o.x + o.paddingX
+		y := o.y + o.paddingY
 		for r := range len(o.placeholder) {
-			s.SetContent(col, row, rune(o.placeholder[r]), nil, o.placeholderStyle)
-			col++
-			if col >= o.x+o.width-o.paddingX {
-				row++
-				col = o.x + o.paddingX
+			s.SetContent(x, y, rune(o.placeholder[r]), nil, o.placeholderStyleFocused)
+			x++
+			if x >= o.x+o.width-o.paddingX {
+				y++
+				x = o.x + o.paddingX
 			}
-			if row > o.y+o.height {
+			if y > o.y+o.height {
 				break
 			}
 		}
 	} else {
+		x := o.x + o.paddingX
+		y := o.y + o.paddingY
 		if o.hasFocus {
 			for rowLoc := o.y + o.paddingY; rowLoc <= o.y+o.height-o.paddingY; rowLoc++ {
 				for colLoc := o.x + o.paddingX; colLoc <= o.x+o.width-o.paddingX; colLoc++ {
-					s.SetContent(colLoc, rowLoc, ' ', nil, o.style)
+					s.SetContent(colLoc, rowLoc, ' ', nil, o.styleFocused)
 				}
 			}
 		}
@@ -104,25 +92,25 @@ func (o *InputField) Draw(s tcell.Screen) {
 			headText := len(o.text) - totalUsableSpace
 			partialText := o.text[headText:len(o.text)]
 			for r := range len(partialText) {
-				s.SetContent(col, row, rune(partialText[r]), nil, o.styleFocused)
-				col++
-				if col >= o.x+o.width-o.paddingX+1 {
-					row++
-					col = o.x + o.paddingX
+				s.SetContent(x, y, rune(partialText[r]), nil, o.styleFocused)
+				x++
+				if x >= o.x+o.width-o.paddingX+1 {
+					y++
+					x = o.x + o.paddingX
 				}
-				if row > o.y+o.height-o.paddingY {
+				if y > o.y+o.height-o.paddingY {
 					break
 				}
 			}
 		} else {
 			for r := range len(o.text) {
-				s.SetContent(col, row, rune(o.text[r]), nil, o.styleFocused)
-				col++
-				if col >= o.x+o.width-o.paddingX+1 {
-					row++
-					col = o.x + o.paddingX
+				s.SetContent(x, y, rune(o.text[r]), nil, o.styleFocused)
+				x++
+				if x >= o.x+o.width-o.paddingX+1 {
+					y++
+					x = o.x + o.paddingX
 				}
-				if row > o.y+o.height-o.paddingY {
+				if y > o.y+o.height-o.paddingY {
 					break
 				}
 			}
@@ -130,7 +118,7 @@ func (o *InputField) Draw(s tcell.Screen) {
 
 		// Add the cursor at the end
 		if o.isWritting {
-			s.SetContent(col, row, RuneCursor, nil, o.styleFocused)
+			s.SetContent(x, y, RuneCursor, nil, o.styleFocused)
 		}
 	}
 }
