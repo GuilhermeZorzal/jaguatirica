@@ -5,7 +5,10 @@ import (
 )
 
 type Tab struct {
-	title  string
+	Structure
+	title string
+
+	// FIXME: what exactly should be the type of the screens? something more generic may be better
 	screen Inputs
 }
 
@@ -17,8 +20,10 @@ func (o *Tab) HandleInput(s tcell.Screen, k tcell.Key, r rune) {
 	o.screen.HandleInput(s, k, r)
 }
 
-func NewTab(structure Structure, fontColor tcell.Color) *Tab {
-	screen := NewDashboard(structure)
+func NewTab() *Tab {
+	screen := NewDashboard()
+	screen.SetY(1)
+	screen.CreateCenteredElements()
 	title := "New Tab"
 
 	tab := &Tab{
@@ -38,6 +43,28 @@ func (o *Tab) DrawTab(s tcell.Screen, x int, y int, w int, style tcell.Style) {
 	}
 }
 
-// func SetTitle(o *Tab, s string) {
-// 	o.title = s
-// }
+// ███████╗███████╗████████╗████████╗███████╗██████╗ ███████╗
+// ██╔════╝██╔════╝╚══██╔══╝╚══██╔══╝██╔════╝██╔══██╗██╔════╝
+// ███████╗█████╗     ██║      ██║   █████╗  ██████╔╝███████╗
+// ╚════██║██╔══╝     ██║      ██║   ██╔══╝  ██╔══██╗╚════██║
+// ███████║███████╗   ██║      ██║   ███████╗██║  ██║███████║
+// ╚══════╝╚══════╝   ╚═╝      ╚═╝   ╚══════╝╚═╝  ╚═╝╚══════╝
+func (o *Tab) SetStructure(s Structure) {
+	o.Structure = s
+}
+
+func (t *Tab) GetTitle() string {
+	return t.title
+}
+
+func (t *Tab) SetTitle(title string) {
+	t.title = title
+}
+
+func (t *Tab) GetScreen() Inputs {
+	return t.screen
+}
+
+func (t *Tab) SetScreen(screen Inputs) {
+	t.screen = screen
+}

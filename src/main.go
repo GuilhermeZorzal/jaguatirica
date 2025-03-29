@@ -1,5 +1,6 @@
 package main
 
+// The code for main is an adaptation of the tutorial for tcell in the tcells repo
 import (
 	"log"
 
@@ -43,9 +44,25 @@ func main() {
 	// queue is LIFO, it has a limited length, and PostEvent() can
 	// return an error.
 	// s.PostEvent(tcell.NewEventKey(tcell.KeyRune, rune('a'), 0))
-	//
-	// mode := "normal"
-	browser := NewBrowser(s)
+
+	// Here's declarared the browser class, reponsible for all the logic behind the browser
+
+	// browser := NewBrowser(s)
+	SearchBar := NewDashboard()
+
+	// SearchBar := NewSearchBar()
+	x, y := s.Size()
+
+	SearchBar.SetWidth(x)
+	SearchBar.SetHeight(y)
+	SearchBar.CreateCenteredElements()
+	// SearchBar.SetHeight(2)
+	// SearchBar.SetWidth(30)
+	// SearchBar.SetPaddingX(1)
+	// SearchBar.SetPaddingY(1)
+	// SearchBar.SetY(8)
+	// logo := NewLogo()
+
 	// x, y := s.Size()
 	// tabStruct := NewStructure(1, 0, x-1, y, 0, 0, true, tcell.ColorNone)
 	// tab := NewTab(*tabStruct, tcell.ColorWhite)
@@ -64,26 +81,31 @@ func main() {
 		switch ev := ev.(type) {
 
 		case *tcell.EventResize:
+			// every time the screen resizes, we clear the screen and redraw the browser
 			s.Clear()
-			browser.Draw(s)
-			// tab.Draw(s)
-			// iStr := NewStructure(0, 0, 8, 8, 0, 0, true, tcell.ColorBrown)
-			// // iStr := NewStructure(structure.x+structure.paddingX, structure.y+structure.paddingY, structure.x+structure.width, structure.y+structure.paddingY, 0, 0, true, tcell.ColorBrown)
-			//
-			// i := NewInputField(*iStr)
-			// i.Draw(s)
+			// browser.Draw(s)
+			SearchBar.Draw(s)
+			// logo.Draw(s)
 			s.Sync()
+
 		case *tcell.EventKey:
-			browser.HandleInput(s, ev.Key(), ev.Rune())
-			// tab.HandleInput(s, ev.Key(), ev.Rune())
+			// Browser handles input inside its own structure
+			// browser.HandleInput(s, ev.Key(), ev.Rune())
+			SearchBar.HandleInput(s, ev.Key(), ev.Rune())
 			if ev.Key() == tcell.KeyCtrlC {
 				return
 			}
-			// s.SetContent(1, 0, ev.Rune(), nil, defStyle)
+			// s.SetContent(10, 0, '▎', nil, defStyle)
+
 		case *tcell.EventMouse:
+			// aparently by the original example (and the doc), tcell handles key pressed and released as the same event.
+			// see original example for better understanding.
 			x, y := ev.Position()
 
+			// yet to be implemented
+			// browser.HandleMouseInput()
 			switch ev.Buttons() {
+
 			case tcell.Button1, tcell.Button2:
 				if ox < 0 {
 					ox, oy = x, y // record location when click started

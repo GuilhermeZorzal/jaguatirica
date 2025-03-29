@@ -4,7 +4,14 @@ import (
 	"github.com/gdamore/tcell/v2"
 )
 
+type Structurable interface {
+	// Go doenst allow direct struct embedding. This is a better practice
+	SetStructure(*Structure)
+	GetStructure() *Structure
+}
+
 type Drawable interface {
+	Structurable
 	Draw(tcell.Screen)
 }
 
@@ -14,7 +21,7 @@ type Inputs interface {
 }
 
 type Screen struct {
-	Structure
-	objects []Drawable
-	inputs  []Inputs
+	Structure Structure
+	objects   []Drawable
+	inputs    []Inputs
 }

@@ -51,6 +51,10 @@ func NewInputField() *InputField {
 
 func (o *InputField) Draw(s tcell.Screen) {
 	if len(o.text) == 0 {
+		if o.isWritting {
+			s.SetContent(o.x+o.paddingX, o.y+o.paddingY, RuneCursor, nil, o.styleFocused)
+			return
+		}
 		if o.hasFocus {
 			for rowLoc := o.y + o.paddingY; rowLoc <= o.y+o.height-o.paddingY; rowLoc++ {
 				for colLoc := o.x + o.paddingX; colLoc <= o.x+o.width-o.paddingX; colLoc++ {

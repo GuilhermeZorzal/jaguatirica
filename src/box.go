@@ -1,5 +1,9 @@
 package main
 
+// probably will not be used in the future. Main purpose was to try and undestand tcell.
+// But can be adapted.
+//  - it just makes more sense to create a structure with borders and text in it instead
+//  a box containing everything at once: Single Responsability Principle
 import (
 	"github.com/gdamore/tcell/v2"
 )
@@ -61,7 +65,7 @@ func (b *Box) deleteLastCharText(c rune) {
 }
 
 func (b *Box) SetTitleColor(color tcell.Color) {
-	b.titleColor = color
+	b.SetTitleColor(color)
 }
 
 func (b *Box) SetSize(x, y, width, height int) {
@@ -72,10 +76,7 @@ func (b *Box) SetSize(x, y, width, height int) {
 }
 
 func (b *Box) Draw(s tcell.Screen) {
-	// Fill background
-	// style := tcell.StyleDefault.Background(tcell.ColorReset).Foreground(tcell.ColorReset)
-	style := tcell.StyleDefault.Background(b.backgroundColor).Foreground(b.foregroundColor)
-
+	style := b.style
 	y := b.y
 	x := b.x
 	height := b.height
@@ -89,7 +90,6 @@ func (b *Box) Draw(s tcell.Screen) {
 			}
 		}
 		return
-
 	}
 
 	for row := y; row <= y+height; row++ {
@@ -98,9 +98,9 @@ func (b *Box) Draw(s tcell.Screen) {
 		}
 	}
 
-	styleBorders := tcell.StyleDefault.Background(b.backgroundColor).Foreground(b.borderColor)
+	styleBorders := b.style
 	if b.hasFocus {
-		styleBorders = tcell.StyleDefault.Background(b.backgroundColor).Foreground(b.borderColorFocused)
+		styleBorders = b.styleFocused
 	}
 
 	// Draw borders
@@ -164,12 +164,10 @@ func NewBox() *Box {
 		paddingX: 1,
 		paddingY: 2,
 
-		visible:         true,
-		backgroundColor: tcell.ColorNone,
+		visible: true,
 	}
 
 	bor := &Border{
-		border:   true,
 		borderTL: '╭',
 		borderTR: '╮',
 		borderBL: '╰',
@@ -177,10 +175,6 @@ func NewBox() *Box {
 		borderH:  tcell.RuneHLine,
 		borderV:  tcell.RuneVLine,
 
-		borderColor:        tcell.ColorNone,
-		borderColorFocused: tcell.ColorCadetBlue,
-
-		titleColor:    tcell.ColorWhite,
 		title:         "box",
 		titlePosition: 0,
 	}

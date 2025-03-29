@@ -2,119 +2,12 @@ package main
 
 import "github.com/gdamore/tcell/v2"
 
+// FIXME: Try to first create the elements in the constructor, and then fix the position
+// FIXME: Resize
 type Dashboard struct {
 	Structure
 	objects []Drawable
 	inputs  Inputs
-}
-
-type LogoBox struct {
-	Structure
-	Logo
-}
-
-type Logo struct {
-	width, height int
-	string        [][]rune
-}
-
-func (o *LogoBox) Draw(s tcell.Screen) {
-	col := o.x
-	row := o.y
-	style := tcell.StyleDefault.Background(tcell.ColorNone).Foreground(tcell.ColorWhite)
-	for i := range len(o.string) {
-		for x := range len(o.string[i]) {
-			s.SetContent(col+x, row+i, rune(o.string[i][x]), nil, style)
-		}
-	}
-}
-
-func NewLogo() *Logo {
-	string1 := "     ██╗ █████╗  ██████╗ ██╗   ██╗ █████╗ ████████╗██╗██████╗ ██╗ ██████╗ █████╗ "
-	string2 := "     ██║██╔══██╗██╔════╝ ██║   ██║██╔══██╗╚══██╔══╝██║██╔══██╗██║██╔════╝██╔══██╗"
-	string3 := "     ██║███████║██║  ███╗██║   ██║███████║   ██║   ██║██████╔╝██║██║     ███████║"
-	string4 := "██   ██║██╔══██║██║   ██║██║   ██║██╔══██║   ██║   ██║██╔══██╗██║██║     ██╔══██║"
-	string5 := "╚█████╔╝██║  ██║╚██████╔╝╚██████╔╝██║  ██║   ██║   ██║██║  ██║██║╚██████╗██║  ██║"
-	string6 := " ╚════╝ ╚═╝  ╚═╝ ╚═════╝  ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚═╝╚═╝  ╚═╝╚═╝ ╚═════╝╚═╝  ╚═╝"
-
-	rstring1 := []rune(string1)
-	rstring2 := []rune(string2)
-	rstring3 := []rune(string3)
-	rstring4 := []rune(string4)
-	rstring5 := []rune(string5)
-	rstring6 := []rune(string6)
-
-	// string1 := "     ##  #####   ######  ##    ##  #####  ######## ## ######  ##  ######  #####  "
-	// string2 := "     ## ##   ## ##       ##    ## ##   ##    ##    ## ##   ## ## ##      ##   ## "
-	// string3 := "     ## ####### ##   ### ##    ## #######    ##    ## ######  ## ##      ####### "
-	// string4 := "##   ## ##   ## ##    ## ##    ## ##   ##    ##    ## ##   ## ## ##      ##   ## "
-	// string5 := " #####  ##   ##  ######   ######  ##   ##    ##    ## ##   ## ##  ###### ##   ## "
-	// string6 := "                                                                                 "
-
-	list := [][]rune{
-		rstring1,
-		rstring2,
-		rstring3,
-		rstring4,
-		rstring5,
-		rstring6,
-	}
-	l := &Logo{
-		string: list,
-		height: 6,
-		width:  81,
-	}
-	return l
-}
-
-func (o *LogoBox) HandleInput(s tcell.Screen) {
-	style := tcell.StyleDefault.Background(o.backgroundColor).Foreground(o.backgroundColor)
-	s.SetContent(0, 8, '', nil, style)
-}
-
-func NewDashboard(o Structure) *Dashboard {
-	logo := NewLogo()
-	searchHeight := 2
-	widthSearch := (o.width / 2)
-
-	xSearch := (o.width - widthSearch) / 2
-	xLogo := (o.width - logo.width) / 2
-
-	yLogo := (o.height - searchHeight - logo.height) / 2
-	ySearch := yLogo + logo.height
-
-	logoStruct := NewStructure(xLogo, yLogo, logo.width, logo.height, 0, 1, true, tcell.ColorNone)
-
-	searchBarStruct := NewStructure(xSearch, ySearch, widthSearch, searchHeight, 2, 1, true, tcell.ColorNone)
-	searchBorder := NewBorder(
-		*searchBarStruct,
-		true,
-		'╭',
-		'╮',
-		'╰',
-		'╯',
-		tcell.RuneHLine,
-		tcell.RuneVLine,
-		tcell.ColorWhite,
-		tcell.ColorLightBlue,
-		tcell.ColorNone,
-		" Search ",
-		tcell.ColorNone,
-		1,
-	)
-
-	searchBar := NewSearchBar(*searchBarStruct, *searchBorder, "Search", "", false, tcell.ColorLightBlue, tcell.ColorNone, tcell.ColorWhite, tcell.ColorGray)
-
-	LogoBox := &LogoBox{
-		Structure: *logoStruct,
-		Logo:      *logo,
-	}
-
-	dashboard := &Dashboard{
-		objects: []Drawable{searchBar, LogoBox},
-		inputs:  searchBar,
-	}
-	return dashboard
 }
 
 func (o *Dashboard) Draw(s tcell.Screen) {
@@ -124,5 +17,63 @@ func (o *Dashboard) Draw(s tcell.Screen) {
 }
 
 func (o *Dashboard) HandleInput(s tcell.Screen, e tcell.Key, k rune) {
+	if o.inputs == nil {
+		return
+	}
 	o.inputs.HandleInput(s, e, k)
+}
+
+func NewDashboard() *Dashboard {
+	// logo := NewLogo()
+	// searchBar := NewSearchBar()
+	dashboard := &Dashboard{
+		// objects: []Drawable{searchBar, logo},
+		// inputs:  searchBar,
+	}
+	return dashboard
+}
+
+func (o *Dashboard) CreateCenteredElements() {
+	heightSearch := 2
+	widthSearch := (o.width / 2)
+
+	xSearch := (o.width - widthSearch) / 2
+	logo := NewLogo()
+	xLogo := (o.width - logo.width) / 2
+
+	yLogo := (o.height - heightSearch - logo.height) / 2
+	ySearch := yLogo + logo.height
+
+	searchBar := NewSearchBar()
+	searchBar.SetX(xSearch)
+	searchBar.SetY(ySearch)
+	searchBar.SetWidth(widthSearch)
+	searchBar.SetHeight(heightSearch)
+	searchBar.SetPaddingX(3)
+	searchBar.SetPaddingY(1)
+	searchBar.SetTitle(" Search ")
+	searchBar.SetPlaceholder([]rune("Type here your search"))
+
+	logo.SetX(xLogo)
+	logo.SetY(yLogo)
+
+	o.AppendObject(searchBar)
+	o.AppendObject(logo)
+	o.AppendInput(searchBar)
+}
+
+func (o *Dashboard) GetStructure() *Structure {
+	return &o.Structure
+}
+
+func (o *Dashboard) SetStructure(s *Structure) {
+	o.Structure = *s
+}
+
+func (o *Dashboard) AppendObject(obj Drawable) {
+	o.objects = append(o.objects, obj)
+}
+
+func (o *Dashboard) AppendInput(obj Inputs) {
+	o.inputs = obj
 }

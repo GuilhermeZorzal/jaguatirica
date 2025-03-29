@@ -17,10 +17,14 @@ type Browser struct {
 
 func NewBrowser(s tcell.Screen) *Browser {
 	x, y := s.Size()
-	browserStruct := NewStructure(0, 0, x, y, 0, 0, true, tcell.ColorNone)
-	tabStruct := NewStructure(1, 0, x, y, 0, 0, true, tcell.ColorNone)
-	lineStruct := NewStructure(0, y-1, x, 1, 1, 0, true, tcell.ColorBlack)
-	tab := NewTab(*tabStruct, tcell.ColorWhite)
+	browserStruct := NewStructure()
+	browserStruct.SetHeight(y - 1)
+	browserStruct.SetWidth(x)
+	tab := NewTab()
+	das := NewDashboard()
+	das.SetHeight(y - 1)
+	das.SetWidth(x)
+	tab.SetScreen(das)
 
 	b := &Browser{
 		Structure: *browserStruct,
@@ -28,13 +32,13 @@ func NewBrowser(s tcell.Screen) *Browser {
 		current:   0,
 		Mode:      "NORMAL",
 	}
-	b.Line = *NewLine(*lineStruct, tcell.ColorWhite, &b.Mode)
+	b.Line = *NewLine()
 	return b
 }
 
 func (o *Browser) Draw(s tcell.Screen) {
 	o.Tab[o.current].Draw(s)
-	o.Line.Draw(s)
+	// o.Line.Draw(s)
 	o.DrawTabs(s)
 }
 
@@ -44,8 +48,9 @@ func (o *Browser) HandleInput(s tcell.Screen, k tcell.Key, r rune) {
 		switch r {
 		case 'n':
 			x, y := s.Size()
-			tabStruct := NewStructure(1, 0, x, y, 0, 0, true, tcell.ColorNone)
-			tab := NewTab(*tabStruct, tcell.ColorWhite)
+			tab := NewTab()
+			tab.SetHeight(y / 2)
+			tab.SetWidth(x / 2)
 			o.Tab = append(o.Tab, *tab)
 			o.current = len(o.Tab) - 1
 		case 'x':
@@ -90,8 +95,8 @@ func (o *Browser) DrawTabs(s tcell.Screen) {
 	ini := 1
 	x, _ := s.Size()
 
-	style := tcell.StyleDefault.Background(o.backgroundColor).Foreground(tcell.ColorWhite).Bold(false)
-	styleBold := tcell.StyleDefault.Background(o.backgroundColor).Foreground(tcell.ColorWhite).Bold(true)
+	style := tcell.StyleDefault
+	styleBold := tcell.StyleDefault.Bold(true)
 
 	for i := range x {
 		s.SetContent(i, 0, ' ', nil, style)
@@ -117,4 +122,7 @@ func (o *Browser) DrawTabs(s tcell.Screen) {
 			break
 		}
 	}
+}
+
+func (o *Browser) HandleMouseInput() {
 }
