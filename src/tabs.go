@@ -22,8 +22,7 @@ func (o *Tab) HandleInput(s tcell.Screen, k tcell.Key, r rune) {
 
 func NewTab() *Tab {
 	screen := NewDashboard()
-	screen.SetY(1)
-	screen.CreateCenteredElements()
+	screen.CenterElements()
 	title := "New Tab"
 
 	tab := &Tab{
@@ -67,4 +66,10 @@ func (t *Tab) GetScreen() Inputs {
 
 func (t *Tab) SetScreen(screen Inputs) {
 	t.screen = screen
+}
+
+func (o *Tab) Resize() {
+	o.SetHeight(o.height)
+	o.SetWidth(o.width)
+	o.screen.Resize()
 }

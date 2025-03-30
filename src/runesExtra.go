@@ -4,4 +4,5 @@ const (
 	RuneCursor      = '▎'
 	RuneCursorRight = '▕'
 	RuneClose       = ''
+	RuneCloseCircle = ''
 )

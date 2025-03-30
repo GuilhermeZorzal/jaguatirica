@@ -18,21 +18,19 @@ type Browser struct {
 func NewBrowser(s tcell.Screen) *Browser {
 	x, y := s.Size()
 	browserStruct := NewStructure()
-	browserStruct.SetHeight(y - 1)
+	browserStruct.SetHeight(y)
 	browserStruct.SetWidth(x)
-	tab := NewTab()
-	das := NewDashboard()
-	das.SetHeight(y - 1)
-	das.SetWidth(x)
-	tab.SetScreen(das)
 
 	b := &Browser{
 		Structure: *browserStruct,
-		Tab:       []Tab{*tab},
-		current:   0,
-		Mode:      "NORMAL",
+		// Tab:       []Tab{*tab},
+		current: 0,
+		Mode:    "NORMAL",
 	}
+
+	b.AddTab(s)
 	b.Line = *NewLine()
+
 	return b
 }
 
@@ -47,18 +45,9 @@ func (o *Browser) HandleInput(s tcell.Screen, k tcell.Key, r rune) {
 	case "NORMAL":
 		switch r {
 		case 'n':
-			x, y := s.Size()
-			tab := NewTab()
-			tab.SetHeight(y / 2)
-			tab.SetWidth(x / 2)
-			o.Tab = append(o.Tab, *tab)
-			o.current = len(o.Tab) - 1
+			o.AddTab(s)
 		case 'x':
-			if len(o.Tab) == 1 {
-				os.Exit(0)
-			}
-			o.Tab = slices.Delete(o.Tab, o.current, o.current+1)
-			o.current = 0
+			o.RemoveTab(s)
 		case 'q':
 			os.Exit(0)
 		case 'i':
@@ -124,5 +113,51 @@ func (o *Browser) DrawTabs(s tcell.Screen) {
 	}
 }
 
+func (o *Browser) RemoveTab(s tcell.Screen) {
+	if len(o.Tab) == 1 {
+		os.Exit(0)
+	}
+	o.Tab = slices.Delete(o.Tab, o.current, o.current+1)
+	o.current = 0
+}
+
+func (o *Browser) AddTab(s tcell.Screen) {
+	x, y := s.Size()
+	tab := NewTab()
+
+	dash := NewDashboard()
+	dash.SetHeight(y - 1)
+	dash.SetWidth(x)
+	dash.CenterElements()
+	tab.SetScreen(dash)
+
+	// tab.SetHeight(y / 2)
+	// tab.SetWidth(x / 2)
+	o.Tab = append(o.Tab, *tab)
+	o.current = len(o.Tab) - 1
+}
+
 func (o *Browser) HandleMouseInput() {
+}
+
+func (o *Browser) SetWidth(width int) {
+	o.width = width
+	for _, i := range o.Tab {
+		i.screen.Resize()
+	}
+}
+
+func (o *Browser) SetHeight(height int) {
+	o.height = height
+}
+
+func (o *Browser) Resize(s tcell.Screen) {
+	x, y := s.Size()
+	o.SetWidth(x)
+	o.SetHeight(y)
+	for _, i := range o.Tab {
+		i.screen.SetHeight(o.height)
+		i.screen.SetWidth(o.width)
+		i.screen.Resize()
+	}
 }

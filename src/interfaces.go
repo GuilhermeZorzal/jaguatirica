@@ -4,14 +4,31 @@ import (
 	"github.com/gdamore/tcell/v2"
 )
 
-type Structurable interface {
+type BoxStructure interface {
 	// Go doenst allow direct struct embedding. This is a better practice
+	SetX(int)
+	SetY(int)
+	SetWidth(int)
+	SetHeight(int)
+	SetPaddingX(int)
+	SetPaddingY(int)
+	SetVisible(bool)
+
+	GetX() int
+	GetY() int
+	GetWidth() int
+	GetHeight() int
+	GetPaddingX() int
+	GetPaddingY() int
+	GetVisible() bool
+
 	SetStructure(*Structure)
 	GetStructure() *Structure
+	Resize()
 }
 
 type Drawable interface {
-	Structurable
+	BoxStructure
 	Draw(tcell.Screen)
 }
 

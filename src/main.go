@@ -47,26 +47,8 @@ func main() {
 
 	// Here's declarared the browser class, reponsible for all the logic behind the browser
 
-	// browser := NewBrowser(s)
-	SearchBar := NewDashboard()
-
-	// SearchBar := NewSearchBar()
-	x, y := s.Size()
-
-	SearchBar.SetWidth(x)
-	SearchBar.SetHeight(y)
-	SearchBar.CreateCenteredElements()
-	// SearchBar.SetHeight(2)
-	// SearchBar.SetWidth(30)
-	// SearchBar.SetPaddingX(1)
-	// SearchBar.SetPaddingY(1)
-	// SearchBar.SetY(8)
-	// logo := NewLogo()
-
-	// x, y := s.Size()
-	// tabStruct := NewStructure(1, 0, x-1, y, 0, 0, true, tcell.ColorNone)
-	// tab := NewTab(*tabStruct, tcell.ColorWhite)
-	// dash := NewDashboard(*tabStruct)
+	browser := NewBrowser(s)
+	browser.Resize(s) // Set the current size for the elements
 
 	// Event loop
 	ox, oy := -1, -1
@@ -83,18 +65,17 @@ func main() {
 		case *tcell.EventResize:
 			// every time the screen resizes, we clear the screen and redraw the browser
 			s.Clear()
-			// browser.Draw(s)
-			SearchBar.Draw(s)
-			// logo.Draw(s)
+			browser.Resize(s)
+			browser.Draw(s)
 			s.Sync()
 
 		case *tcell.EventKey:
 			// Browser handles input inside its own structure
-			// browser.HandleInput(s, ev.Key(), ev.Rune())
-			SearchBar.HandleInput(s, ev.Key(), ev.Rune())
+			browser.HandleInput(s, ev.Key(), ev.Rune())
 			if ev.Key() == tcell.KeyCtrlC {
 				return
 			}
+			browser.Draw(s)
 			// s.SetContent(10, 0, '▎', nil, defStyle)
 
 		case *tcell.EventMouse:

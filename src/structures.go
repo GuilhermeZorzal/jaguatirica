@@ -99,3 +99,39 @@ func (o *Structure) SetStyleFocused(style tcell.Style) {
 func (o *Structure) SetVisible(visible bool) {
 	o.visible = visible
 }
+
+//	██████╗ ███████╗████████╗
+//
+// ██╔════╝ ██╔════╝╚══██╔══╝
+// ██║  ███╗█████╗     ██║
+// ██║   ██║██╔══╝     ██║
+// ╚██████╔╝███████╗   ██║
+//
+//	╚═════╝ ╚══════╝   ╚═╝
+func (o *Structure) GetX() int {
+	return o.x
+}
+
+func (o *Structure) GetY() int {
+	return o.y
+}
+
+func (o *Structure) GetWidth() int {
+	return o.width
+}
+
+func (o *Structure) GetHeight() int {
+	return o.height
+}
+
+func (o *Structure) GetPaddingX() int {
+	return o.paddingX
+}
+
+func (o *Structure) GetPaddingY() int {
+	return o.paddingY
+}
+
+func (o *Structure) GetVisible() bool {
+	return o.visible
+}

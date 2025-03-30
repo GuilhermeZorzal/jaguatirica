@@ -111,3 +111,5 @@ func (l *Logo) GetString() [][]rune {
 func (l *Logo) GetStructure() *Structure {
 	return l.Structure
 }
+
+func (o *Logo) Resize() {}

@@ -110,3 +110,5 @@ func (o *SearchBar) SetPaddingY(paddingY int) {
 	o.InputField.SetY(o.GetStructure().y + o.paddingY)
 	o.InputField.SetHeight(o.GetStructure().height - 2*o.paddingY)
 }
+
+func (o *SearchBar) Resize() {}

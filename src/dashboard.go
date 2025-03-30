@@ -24,42 +24,47 @@ func (o *Dashboard) HandleInput(s tcell.Screen, e tcell.Key, k rune) {
 }
 
 func NewDashboard() *Dashboard {
-	// logo := NewLogo()
-	// searchBar := NewSearchBar()
+	logo := NewLogo()
+	searchBar := NewSearchBar()
+	searchBar.SetTitle(" Search ")
+	searchBar.SetPlaceholder([]rune("Type here your search"))
 	dashboard := &Dashboard{
-		// objects: []Drawable{searchBar, logo},
-		// inputs:  searchBar,
+		objects: []Drawable{logo, searchBar},
+		inputs:  searchBar,
 	}
 	return dashboard
 }
 
-func (o *Dashboard) CreateCenteredElements() {
+func (o *Dashboard) CenterElements() {
+	logo := o.objects[0]
+	searchBar := o.inputs
+
 	heightSearch := 2
 	widthSearch := (o.width / 2)
+	if o.width/2 < logo.GetStructure().width {
+		widthSearch = logo.GetStructure().width - 4
+	}
+	if o.width < logo.GetStructure().width {
+		widthSearch = o.width - 2
+	}
 
 	xSearch := (o.width - widthSearch) / 2
-	logo := NewLogo()
-	xLogo := (o.width - logo.width) / 2
+	xLogo := (o.width - logo.GetWidth()) / 2
 
-	yLogo := (o.height - heightSearch - logo.height) / 2
-	ySearch := yLogo + logo.height
+	yLogo := (o.height - heightSearch - logo.GetHeight()) / 2
+	ySearch := yLogo + logo.GetHeight()
 
-	searchBar := NewSearchBar()
+	// searchBar := NewSearchBar()
 	searchBar.SetX(xSearch)
 	searchBar.SetY(ySearch)
+
 	searchBar.SetWidth(widthSearch)
 	searchBar.SetHeight(heightSearch)
 	searchBar.SetPaddingX(3)
 	searchBar.SetPaddingY(1)
-	searchBar.SetTitle(" Search ")
-	searchBar.SetPlaceholder([]rune("Type here your search"))
 
 	logo.SetX(xLogo)
 	logo.SetY(yLogo)
-
-	o.AppendObject(searchBar)
-	o.AppendObject(logo)
-	o.AppendInput(searchBar)
 }
 
 func (o *Dashboard) GetStructure() *Structure {
@@ -76,4 +81,8 @@ func (o *Dashboard) AppendObject(obj Drawable) {
 
 func (o *Dashboard) AppendInput(obj Inputs) {
 	o.inputs = obj
+}
+
+func (o *Dashboard) Resize() {
+	o.CenterElements()
 }
